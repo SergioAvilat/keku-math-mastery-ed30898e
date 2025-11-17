@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import FeedbackMascot from '@/components/FeedbackMascot';
+import { validateTextAnswer, validateMultipleChoice } from '@/lib/answerValidator';
 
 interface ExerciseCardProps {
   exercise: any;
@@ -14,20 +16,29 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [textAnswer, setTextAnswer] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleSubmit = () => {
     if (submitted) return;
     
-    let isCorrect = false;
+    let correct = false;
     
     if (exercise.type === 'multiple-choice') {
-      isCorrect = selectedAnswer === exercise.correctAnswer;
+      correct = validateMultipleChoice(selectedAnswer, exercise.correctAnswer);
     } else if (exercise.type === 'fill-blank') {
-      isCorrect = textAnswer.trim().toLowerCase() === exercise.correctAnswer.toLowerCase();
+      correct = validateTextAnswer(textAnswer, exercise.correctAnswer);
     }
     
+    setIsCorrect(correct);
+    setShowFeedback(true);
     setSubmitted(true);
-    onAnswer(isCorrect);
+    
+    // Ocultar feedback y avanzar después de la animación
+    setTimeout(() => {
+      setShowFeedback(false);
+      onAnswer(correct);
+    }, 2000);
   };
 
   const canSubmit = 
@@ -35,10 +46,13 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
     (exercise.type === 'fill-blank' && textAnswer.trim());
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-xl">{exercise.question}</CardTitle>
-      </CardHeader>
+    <>
+      <FeedbackMascot isCorrect={isCorrect} show={showFeedback} />
+      
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-xl">{exercise.question}</CardTitle>
+        </CardHeader>
       
       <CardContent className="space-y-6">
         {exercise.type === 'multiple-choice' && (
@@ -114,6 +128,7 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
           {submitted ? 'Siguiente...' : 'Comprobar'}
         </Button>
       </CardContent>
-    </Card>
+      </Card>
+    </>
   );
 }
