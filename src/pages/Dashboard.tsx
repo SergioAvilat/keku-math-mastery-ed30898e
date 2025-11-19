@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { levels } from '@/data/levels';
-import { Trophy, Flame, Star, LogOut, Lock, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { curriculum } from '@/data/curriculum';
+import { Trophy, Flame, Star, LogOut, Lock, Check, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Profile {
@@ -16,7 +15,7 @@ interface Profile {
   current_streak: number;
 }
 
-interface LevelProgress {
+interface TopicProgress {
   level_number: number;
   is_unlocked: boolean;
   is_completed: boolean;
@@ -28,7 +27,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [levelProgress, setLevelProgress] = useState<LevelProgress[]>([]);
+  const [topicProgress, setTopicProgress] = useState<TopicProgress[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -62,7 +61,7 @@ export default function Dashboard() {
         }
       }
 
-      setLevelProgress(progressData || []);
+      setTopicProgress(progressData || []);
     } catch (error) {
       toast({
         title: 'Error',
@@ -74,25 +73,35 @@ export default function Dashboard() {
     }
   };
 
-  const getLevelStatus = (levelNumber: number) => {
-    return levelProgress.find(p => p.level_number === levelNumber);
+  const getTopicStatus = (topicNumber: number) => {
+    return topicProgress.find(p => p.level_number === topicNumber);
   };
 
-  const handleLevelClick = (levelNumber: number) => {
-    const status = getLevelStatus(levelNumber);
+  const handleTopicClick = (topicNumber: number) => {
+    const status = getTopicStatus(topicNumber);
     if (status?.is_unlocked) {
-      navigate(`/level/${levelNumber}`);
+      navigate(`/topic/${topicNumber}`);
     } else {
       toast({
-        title: 'Nivel bloqueado',
-        description: 'Completa el nivel anterior para desbloquear este',
+        title: 'Tema bloqueado',
+        description: 'Completa el tema anterior para desbloquear este',
       });
     }
   };
 
+  const getLearningStyleLabel = (style: string) => {
+    const styles: Record<string, string> = {
+      visual: 'Visual',
+      auditivo: 'Auditivo',
+      kinestesico: 'Kinestésico',
+      lectoescritor: 'Lectoescritor',
+    };
+    return styles[style] || style;
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Cargando...</p>
@@ -128,93 +137,125 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Welcome Section */}
+        {/* Welcome */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">
+          <h2 className="text-3xl font-bold mb-2">
             ¡Hola, {profile?.username || 'Estudiante'}! 👋
           </h2>
           <p className="text-muted-foreground">
-            Tu estilo de aprendizaje: <span className="font-semibold text-primary capitalize">{profile?.learning_style?.replace('_', ' ')}</span>
+            Tu estilo de aprendizaje es <span className="font-semibold text-foreground">
+              {getLearningStyleLabel(profile?.learning_style || '')}
+            </span>
           </p>
         </div>
 
-        {/* Progress Overview */}
-        <Card className="mb-8 shadow-md">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Tu progreso en Módulo A</h3>
-              <span className="text-sm text-muted-foreground">
-                {levelProgress.filter(p => p.is_completed).length} / {levels.length} niveles
-              </span>
-            </div>
-            <Progress 
-              value={(levelProgress.filter(p => p.is_completed).length / levels.length) * 100} 
-              className="h-3"
-            />
-          </CardContent>
-        </Card>
+        {/* Curriculum */}
+        <div className="space-y-8">
+          {curriculum.map((level) => {
+            const levelTopics = level.topics;
+            const completedTopics = levelTopics.filter(
+              t => getTopicStatus(t.number)?.is_completed
+            ).length;
+            const totalTopics = levelTopics.length;
+            const progressPercent = (completedTopics / totalTopics) * 100;
 
-        {/* Levels Grid */}
-        <div className="space-y-6">
-          <h3 className="text-xl font-bold flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-accent" />
-            Mapa de Niveles
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {levels.map((level) => {
-              const status = getLevelStatus(level.number);
-              const isLocked = !status?.is_unlocked;
-              const isCompleted = status?.is_completed;
-
-              return (
-                <Card
-                  key={level.number}
-                  className={`relative overflow-hidden transition-all cursor-pointer hover:shadow-lg ${
-                    isLocked ? 'opacity-60' : 'hover:scale-105'
-                  }`}
-                  onClick={() => handleLevelClick(level.number)}
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${level.color} opacity-10`} />
-                  
-                  <CardContent className="relative p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${level.color} flex items-center justify-center text-white font-bold text-xl shadow-md`}>
-                          {level.number}
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-bold">{level.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {level.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      {isLocked && <Lock className="w-5 h-5 text-muted-foreground" />}
-                      {isCompleted && <Check className="w-5 h-5 text-success" />}
+            return (
+              <Card key={level.number} className="overflow-hidden">
+                <CardHeader className={`bg-gradient-to-r ${level.color} text-white`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-2xl font-black">{level.title}</CardTitle>
+                      <p className="text-xl font-semibold mt-1 opacity-90">{level.subtitle}</p>
+                      <p className="text-sm mt-2 opacity-80">{level.description}</p>
                     </div>
+                    <Trophy className="w-12 h-12 opacity-80" />
+                  </div>
+                  
+                  {/* Progress bar */}
+                  <div className="mt-4">
+                    <div className="flex justify-between text-sm mb-2 opacity-90">
+                      <span>Progreso del nivel</span>
+                      <span>{completedTopics}/{totalTopics} temas</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div
+                        className="bg-white rounded-full h-2 transition-all duration-500"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                </CardHeader>
 
-                    {!isLocked && (
-                      <div className="flex items-center gap-1 mt-4">
-                        {[1, 2, 3].map((star) => (
-                          <Star
-                            key={star}
-                            className={`w-5 h-5 ${
-                              star <= (status?.stars_earned || 0)
-                                ? 'text-accent fill-accent'
-                                : 'text-muted'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                <CardContent className="p-6">
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {level.topics.map((topic) => {
+                      const status = getTopicStatus(topic.number);
+                      const isLocked = !status?.is_unlocked;
+                      const isCompleted = status?.is_completed;
+                      const stars = status?.stars_earned || 0;
+
+                      return (
+                        <button
+                          key={topic.number}
+                          onClick={() => handleTopicClick(topic.number)}
+                          disabled={isLocked}
+                          className={`
+                            relative p-4 rounded-lg text-left transition-all
+                            ${isLocked 
+                              ? 'bg-muted/50 cursor-not-allowed opacity-60' 
+                              : 'bg-card hover:bg-accent/5 hover:shadow-md cursor-pointer border-2 border-transparent hover:border-primary/20'
+                            }
+                          `}
+                        >
+                          {/* Status indicator */}
+                          <div className="absolute top-4 right-4">
+                            {isLocked && (
+                              <Lock className="w-5 h-5 text-muted-foreground" />
+                            )}
+                            {isCompleted && (
+                              <div className="flex items-center gap-1 bg-success/10 px-2 py-1 rounded-full">
+                                <Check className="w-4 h-4 text-success" />
+                                <span className="text-xs font-bold text-success">{stars}★</span>
+                              </div>
+                            )}
+                            {!isLocked && !isCompleted && (
+                              <ChevronRight className="w-5 h-5 text-primary" />
+                            )}
+                          </div>
+
+                          <div className="pr-12">
+                            <div className="text-xs font-bold text-primary mb-1">
+                              TEMA {topic.number}
+                            </div>
+                            <h3 className="font-bold text-lg mb-2 leading-tight">
+                              {topic.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              {topic.description}
+                            </p>
+                            
+                            <div className="space-y-1">
+                              {topic.details.slice(0, 3).map((detail, idx) => (
+                                <div key={idx} className="text-xs text-muted-foreground flex items-start gap-1">
+                                  <span className="text-primary mt-0.5">•</span>
+                                  <span>{detail}</span>
+                                </div>
+                              ))}
+                              {topic.details.length > 3 && (
+                                <div className="text-xs text-muted-foreground/60 pl-2">
+                                  +{topic.details.length - 3} más...
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </main>
     </div>

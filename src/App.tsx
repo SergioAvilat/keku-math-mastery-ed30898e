@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import VarkTest from "./pages/VarkTest";
 import Dashboard from "./pages/Dashboard";
-import Level from "./pages/Level";
+import Topic from "./pages/Topic";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +25,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/vark-test" element={<VarkTest />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/level/:levelNumber" element={<Level />} />
+            <Route path="/topic/:topicNumber" element={<Topic />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
