@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { curriculum } from '@/data/curriculum';
 import { Trophy, Flame, Star, LogOut, Lock, Check, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Ranking from '@/components/Ranking';
+import RewardChest from '@/components/RewardChest';
 
 interface Profile {
   username: string;
@@ -138,7 +140,7 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Welcome */}
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold mb-2">
             ¡Hola, {profile?.username || 'Estudiante'}! 👋
           </h2>
@@ -147,6 +149,15 @@ export default function Dashboard() {
               {getLearningStyleLabel(profile?.learning_style || '')}
             </span>
           </p>
+        </div>
+
+        {/* Gamification Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Ranking />
+          <RewardChest 
+            currentXP={profile?.total_xp || 0} 
+            onXPSpent={loadUserData}
+          />
         </div>
 
         {/* Curriculum */}
