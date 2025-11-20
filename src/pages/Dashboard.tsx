@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { curriculum } from '@/data/curriculum';
 import { Trophy, Flame, Star, LogOut, Lock, Check, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import Ranking from '@/components/Ranking';
 import RewardChest from '@/components/RewardChest';
 import TitleRoulette from '@/components/TitleRoulette';
 
@@ -120,7 +119,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-3xl font-black text-primary">KEKU</h1>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-accent/10 rounded-full">
               <Flame className="w-5 h-5 text-accent" />
               <span className="font-bold">{profile?.current_streak || 0}</span>
@@ -128,7 +127,13 @@ export default function Dashboard() {
 
             <TitleRoulette 
               currentTitle={profile?.username || 'Estudiante'}
+              currentXP={profile?.total_xp || 0}
               onTitleChange={loadUserData}
+            />
+
+            <RewardChest 
+              currentXP={profile?.total_xp || 0} 
+              onXPSpent={loadUserData}
             />
             
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full">
@@ -155,15 +160,6 @@ export default function Dashboard() {
               {getLearningStyleLabel(profile?.learning_style || '')}
             </span>
           </p>
-        </div>
-
-        {/* Gamification Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Ranking />
-          <RewardChest 
-            currentXP={profile?.total_xp || 0} 
-            onXPSpent={loadUserData}
-          />
         </div>
 
         {/* Curriculum */}

@@ -13,21 +13,60 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
+const XP_COST = 20;
+
 interface TitleRouletteProps {
   currentTitle: string;
+  currentXP: number;
   onTitleChange: () => void;
 }
 
-export default function TitleRoulette({ currentTitle, onTitleChange }: TitleRouletteProps) {
+export default function TitleRoulette({ currentTitle, currentXP, onTitleChange }: TitleRouletteProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [displayTitle, setDisplayTitle] = useState(currentTitle);
   const [finalTitle, setFinalTitle] = useState('');
+  
+  const canSpin = currentXP >= XP_COST;
 
   const spinRoulette = async () => {
-    if (!user || spinning) return;
+    if (!user || spinning || !canSpin) return;
+
+    // Verificar y restar XP primero
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('total_xp')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile || profile.total_xp < XP_COST) {
+        toast({
+          title: 'XP insuficiente',
+          description: `Necesitas ${XP_COST} XP para girar la ruleta`,
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Restar XP
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ total_xp: profile.total_xp - XP_COST })
+        .eq('id', user.id);
+
+      if (updateError) throw updateError;
+    } catch (error) {
+      console.error('Error al restar XP:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo procesar el XP',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     setSpinning(true);
     setFinalTitle('');
@@ -84,10 +123,11 @@ export default function TitleRoulette({ currentTitle, onTitleChange }: TitleRoul
         variant="outline"
         size="sm"
         onClick={() => setOpen(true)}
+        disabled={!canSpin}
         className="gap-2"
       >
         <Trophy className="w-4 h-4" />
-        Ruleta de Títulos
+        Ruleta ({XP_COST} XP)
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -98,7 +138,7 @@ export default function TitleRoulette({ currentTitle, onTitleChange }: TitleRoul
               Ruleta de Títulos
             </DialogTitle>
             <DialogDescription>
-              Gira la ruleta para obtener un nuevo título épico
+              Gira la ruleta por {XP_COST} XP para obtener un nuevo título épico
             </DialogDescription>
           </DialogHeader>
 
@@ -126,11 +166,11 @@ export default function TitleRoulette({ currentTitle, onTitleChange }: TitleRoul
 
             <Button
               onClick={spinRoulette}
-              disabled={spinning}
+              disabled={spinning || !canSpin}
               className="w-full"
               size="lg"
             >
-              {spinning ? 'Girando...' : '¡Girar Ruleta!'}
+              {spinning ? 'Girando...' : canSpin ? '¡Girar Ruleta!' : `Necesitas ${XP_COST - currentXP} XP más`}
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">

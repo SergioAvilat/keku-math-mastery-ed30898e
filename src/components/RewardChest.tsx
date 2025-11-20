@@ -107,59 +107,16 @@ export default function RewardChest({ currentXP, onXPSpent }: RewardChestProps) 
 
   return (
     <>
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-accent" />
-            Reclama Premios
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-center space-y-3">
-            <div 
-              className={`inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 transition-all duration-500 ${
-                isAnimating ? 'animate-bounce scale-110' : ''
-              }`}
-            >
-              <Gift className={`w-12 h-12 text-accent transition-transform ${
-                isAnimating ? 'rotate-12' : ''
-              }`} />
-            </div>
-            
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">
-                Costo por premio
-              </p>
-              <p className="text-2xl font-bold text-accent">
-                {XP_COST} XP
-              </p>
-            </div>
-
-            <div className="p-3 rounded-lg bg-muted/50">
-              <p className="text-xs text-muted-foreground mb-1">
-                Tu XP disponible
-              </p>
-              <p className="text-xl font-bold text-primary">
-                {currentXP} XP
-              </p>
-            </div>
-
-            <Button
-              onClick={handleClaim}
-              disabled={!canClaim || claiming}
-              className="w-full"
-              size="lg"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              {claiming ? 'Abriendo...' : canClaim ? 'Abrir Cofre' : `Necesitas ${XP_COST - currentXP} XP más`}
-            </Button>
-
-            <p className="text-xs text-muted-foreground">
-              Gana frases inspiradoras y tips matemáticos
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <Button
+        onClick={handleClaim}
+        disabled={!canClaim || claiming}
+        variant="outline"
+        size="sm"
+        className="gap-2 relative"
+      >
+        <Gift className={`w-4 h-4 ${isAnimating ? 'animate-bounce' : ''}`} />
+        Cofre ({XP_COST} XP)
+      </Button>
 
       <Dialog open={showReward} onOpenChange={closeReward}>
         <DialogContent className="sm:max-w-md">
