@@ -9,6 +9,7 @@ import { Trophy, Flame, Star, LogOut, Lock, Check, ChevronRight } from 'lucide-r
 import { useToast } from '@/hooks/use-toast';
 import Ranking from '@/components/Ranking';
 import RewardChest from '@/components/RewardChest';
+import TitleRoulette from '@/components/TitleRoulette';
 
 interface Profile {
   username: string;
@@ -124,6 +125,11 @@ export default function Dashboard() {
               <Flame className="w-5 h-5 text-accent" />
               <span className="font-bold">{profile?.current_streak || 0}</span>
             </div>
+
+            <TitleRoulette 
+              currentTitle={profile?.username || 'Estudiante'}
+              onTitleChange={loadUserData}
+            />
             
             <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full">
               <Star className="w-5 h-5 text-primary" />
