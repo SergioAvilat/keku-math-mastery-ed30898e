@@ -43,6 +43,33 @@ export type Database = {
           },
         ]
       }
+      claimed_rewards: {
+        Row: {
+          claimed_at: string
+          id: string
+          reward_content: string
+          reward_type: string
+          user_id: string
+          xp_cost: number
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          reward_content: string
+          reward_type: string
+          user_id: string
+          xp_cost?: number
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          reward_content?: string
+          reward_type?: string
+          user_id?: string
+          xp_cost?: number
+        }
+        Relationships: []
+      }
       exercise_attempts: {
         Row: {
           created_at: string | null
