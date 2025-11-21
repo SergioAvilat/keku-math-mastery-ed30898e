@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import FeedbackMascot from '@/components/FeedbackMascot';
 import { validateTextAnswer, validateMultipleChoice } from '@/lib/answerValidator';
 import { Exercise } from '@/lib/exerciseGenerator';
+import kekuHola from '@/assets/keku-hola.png';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -158,9 +159,16 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
         )}
 
         {exercise.hint && !submitted && (
-          <p className="text-sm text-muted-foreground italic">
-            💡 Pista: {exercise.hint}
-          </p>
+          <div className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg border border-border">
+            <img 
+              src={kekuHola}
+              alt="Keku ayudante"
+              className="w-12 h-12 object-contain flex-shrink-0"
+            />
+            <p className="text-sm text-muted-foreground italic pt-1">
+              💡 <strong>Pista:</strong> {exercise.hint}
+            </p>
+          </div>
         )}
 
         <Button
