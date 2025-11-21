@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, Sparkles } from 'lucide-react';
+import kekuBien from '@/assets/keku-bien.png';
+import kekuIntenta from '@/assets/keku-intenta.png';
 
 interface FeedbackMascotProps {
   isCorrect: boolean | null;
@@ -25,13 +27,22 @@ export default function FeedbackMascot({ isCorrect, show }: FeedbackMascotProps)
         animate ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
       }`}
     >
-      <div
-        className={`relative flex flex-col items-center gap-4 p-8 rounded-3xl shadow-2xl backdrop-blur-md ${
-          isCorrect
-            ? 'bg-gradient-to-br from-success/20 to-success/5 border-2 border-success/30'
-            : 'bg-gradient-to-br from-destructive/20 to-destructive/5 border-2 border-destructive/30'
-        }`}
-      >
+      <div className="flex items-center gap-4">
+        {/* Personaje Keku */}
+        <img 
+          src={isCorrect ? kekuBien : kekuIntenta}
+          alt="Keku mascota"
+          className="w-24 h-24 object-contain"
+        />
+        
+        {/* Popup de feedback */}
+        <div
+          className={`relative flex flex-col items-center gap-4 p-8 rounded-3xl shadow-2xl backdrop-blur-md ${
+            isCorrect
+              ? 'bg-gradient-to-br from-success/20 to-success/5 border-2 border-success/30'
+              : 'bg-gradient-to-br from-destructive/20 to-destructive/5 border-2 border-destructive/30'
+          }`}
+        >
         {/* Personaje animado */}
         <div className="relative">
           {isCorrect ? (
@@ -83,6 +94,7 @@ export default function FeedbackMascot({ isCorrect, show }: FeedbackMascotProps)
               <span className="animate-pulse" style={{ animationDelay: '300ms' }}>🎯</span>
             </>
           )}
+        </div>
         </div>
       </div>
     </div>

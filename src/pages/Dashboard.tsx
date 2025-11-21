@@ -9,6 +9,7 @@ import { Trophy, Flame, Star, LogOut, Lock, Check, ChevronRight } from 'lucide-r
 import { useToast } from '@/hooks/use-toast';
 import RewardChest from '@/components/RewardChest';
 import TitleRoulette from '@/components/TitleRoulette';
+import WelcomeDialog from '@/components/WelcomeDialog';
 
 interface Profile {
   username: string;
@@ -31,11 +32,18 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [topicProgress, setTopicProgress] = useState<TopicProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
 
   useEffect(() => {
     if (!user) {
       navigate('/auth');
       return;
+    }
+
+    // Verificar si es la primera visita
+    const hasWelcomed = localStorage.getItem('keku_welcomed');
+    if (!hasWelcomed) {
+      setIsFirstVisit(true);
     }
 
     loadUserData();
@@ -114,6 +122,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
+      <WelcomeDialog isFirstVisit={isFirstVisit} />
+      
       {/* Header */}
       <header className="bg-card shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">

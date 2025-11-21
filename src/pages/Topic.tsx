@@ -10,6 +10,7 @@ import { ArrowLeft, Star, Trophy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ExerciseCard from '@/components/ExerciseCard';
 import { generateExercises } from '@/lib/exerciseGenerator';
+import kekuFelicidades from '@/assets/keku-felicidades.png';
 
 export default function Topic() {
   const { topicNumber } = useParams();
@@ -120,6 +121,14 @@ export default function Topic() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-secondary/20 p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
+            <div className="flex justify-center mb-4">
+              <img 
+                src={kekuFelicidades}
+                alt="Keku felicitando"
+                className="w-32 h-32 object-contain"
+              />
+            </div>
+            
             <Trophy className="w-16 h-16 text-primary mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">¡Tema Completado!</h2>
             <p className="text-muted-foreground mb-6">{topic?.title}</p>
