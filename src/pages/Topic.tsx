@@ -69,15 +69,18 @@ export default function Topic() {
     const stars = Math.ceil((score / exercises.length) * 3);
     const totalXP = score * 10;
 
-    await supabase.from('level_progress').upsert({
-      user_id: user?.id,
-      level_number: Number(topicNumber),
-      is_unlocked: true,
-      is_completed: true,
-      stars_earned: stars,
-      xp_earned: totalXP,
-      completed_at: new Date().toISOString(),
-    });
+    await supabase.from('level_progress').upsert(
+      {
+        user_id: user?.id,
+        level_number: Number(topicNumber),
+        is_unlocked: true,
+        is_completed: true,
+        stars_earned: stars,
+        xp_earned: totalXP,
+        completed_at: new Date().toISOString(),
+      },
+      { onConflict: 'user_id,level_number' }
+    );
 
     const { data: profile } = await supabase
       .from('profiles')
@@ -92,12 +95,15 @@ export default function Topic() {
 
     // Desbloquear siguiente tema
     if (Number(topicNumber) < 9) {
-      await supabase.from('level_progress').upsert({
-        user_id: user?.id,
-        level_number: Number(topicNumber) + 1,
-        is_unlocked: true,
-        is_completed: false,
-      });
+      await supabase.from('level_progress').upsert(
+        {
+          user_id: user?.id,
+          level_number: Number(topicNumber) + 1,
+          is_unlocked: true,
+          is_completed: false,
+        },
+        { onConflict: 'user_id,level_number' }
+      );
     }
 
     setCompleted(true);
