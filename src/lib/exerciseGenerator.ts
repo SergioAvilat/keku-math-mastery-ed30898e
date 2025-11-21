@@ -1,12 +1,14 @@
 // Generador de ejercicios para cada tema del curriculum
 
-interface Exercise {
+export interface Exercise {
   type: 'multiple-choice' | 'fill-blank';
   question: string;
   options?: string[];
   correctAnswer: string;
   hint?: string;
   explanation?: string;
+  imageQuestion?: string;
+  imageAnswer?: string;
 }
 
 export function generateExercises(topicNumber: number, count: number): Exercise[] {
@@ -243,10 +245,12 @@ function generateTopic7Exercise(): Exercise {
   const exercises = [
     {
       type: 'multiple-choice' as const,
-      question: '1/2 + 1/3 = ?',
+      question: 'Resuelve la suma de fracciones mostrada',
+      imageQuestion: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=200&fit=crop',
       options: ['2/5', '2/6', '5/6', '1/6'],
       correctAnswer: '5/6',
-      hint: 'MCM(2,3) = 6',
+      explanation: 'Se calcula el MCM(2,3) = 6, luego se suman los numeradores',
+      imageAnswer: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,
@@ -257,10 +261,12 @@ function generateTopic7Exercise(): Exercise {
     },
     {
       type: 'multiple-choice' as const,
-      question: '1/2 ÷ 1/4 = ?',
+      question: 'Resuelve la división de fracciones',
+      imageQuestion: 'https://images.unsplash.com/photo-1596495577886-d920f1fb7238?w=400&h=200&fit=crop',
       options: ['1/8', '1/6', '2', '4'],
       correctAnswer: '2',
-      hint: 'Multiplica por inverso',
+      explanation: 'Para dividir fracciones, multiplica por el inverso de la segunda',
+      imageAnswer: 'https://images.unsplash.com/photo-1635372722656-389f87a941b7?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,
@@ -278,10 +284,12 @@ function generateTopic8Exercise(): Exercise {
   const exercises = [
     {
       type: 'multiple-choice' as const,
-      question: '(1/2 + 1/4) × 2 = ?',
+      question: 'Resuelve la expresión con paréntesis y fracciones',
+      imageQuestion: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?w=400&h=200&fit=crop',
       options: ['3/4', '1/2', '3/2', '2'],
       correctAnswer: '3/2',
-      hint: 'Suma primero',
+      explanation: 'Primero resuelve el paréntesis, luego multiplica',
+      imageAnswer: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,
@@ -292,10 +300,12 @@ function generateTopic8Exercise(): Exercise {
     },
     {
       type: 'multiple-choice' as const,
-      question: '[2 + (1/2)] × 3 = ?',
+      question: 'Resuelve los corchetes anidados',
+      imageQuestion: 'https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=400&h=200&fit=crop',
       options: ['15/2', '7', '9/2', '6'],
       correctAnswer: '15/2',
-      hint: 'De adentro hacia afuera',
+      explanation: 'Resuelve de adentro hacia afuera: paréntesis primero, luego corchetes',
+      imageAnswer: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,
@@ -313,10 +323,12 @@ function generateTopic9Exercise(): Exercise {
   const exercises = [
     {
       type: 'multiple-choice' as const,
-      question: '2 + 3 × (1/2) = ?',
+      question: 'Resuelve aplicando jerarquía de operaciones',
+      imageQuestion: 'https://images.unsplash.com/photo-1632571401005-458e9d244591?w=400&h=200&fit=crop',
       options: ['5/2', '7/2', '3', '4'],
       correctAnswer: '7/2',
-      hint: '× primero',
+      explanation: 'Primero la multiplicación, luego la suma',
+      imageAnswer: 'https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,
@@ -327,10 +339,12 @@ function generateTopic9Exercise(): Exercise {
     },
     {
       type: 'multiple-choice' as const,
-      question: '{[4 - (1/2)] × 2} + 1 = ?',
+      question: 'Resuelve los símbolos de agrupación anidados',
+      imageQuestion: 'https://images.unsplash.com/photo-1635070041409-e63e783d1b92?w=400&h=200&fit=crop',
       options: ['7', '8', '9', '6'],
       correctAnswer: '8',
-      hint: 'Adentro → afuera',
+      explanation: 'Resuelve desde el símbolo más interno hacia afuera: ( ) → [ ] → { }',
+      imageAnswer: 'https://images.unsplash.com/photo-1611262588019-db6cc2032da3?w=400&h=200&fit=crop',
     },
     {
       type: 'multiple-choice' as const,

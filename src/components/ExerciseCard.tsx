@@ -6,9 +6,10 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import FeedbackMascot from '@/components/FeedbackMascot';
 import { validateTextAnswer, validateMultipleChoice } from '@/lib/answerValidator';
+import { Exercise } from '@/lib/exerciseGenerator';
 
 interface ExerciseCardProps {
-  exercise: any;
+  exercise: Exercise;
   onAnswer: (isCorrect: boolean) => void;
 }
 
@@ -51,6 +52,15 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
       
       <Card className="shadow-lg">
         <CardHeader>
+          {exercise.imageQuestion && (
+            <div className="mb-4">
+              <img 
+                src={exercise.imageQuestion} 
+                alt="Pregunta visual" 
+                className="w-full rounded-lg border-2 border-border"
+              />
+            </div>
+          )}
           <CardTitle className="text-xl">{exercise.question}</CardTitle>
         </CardHeader>
       
@@ -102,12 +112,46 @@ export default function ExerciseCard({ exercise, onAnswer }: ExerciseCardProps) 
               className="text-lg"
             />
             {submitted && (
-              <p className={`text-sm ${
-                textAnswer.trim().toLowerCase() === exercise.correctAnswer.toLowerCase()
-                  ? 'text-success'
-                  : 'text-destructive'
-              }`}>
-                Respuesta correcta: {exercise.correctAnswer}
+              <div className="space-y-3">
+                {exercise.imageAnswer ? (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Solución:</p>
+                    <img 
+                      src={exercise.imageAnswer} 
+                      alt="Solución visual" 
+                      className="w-full rounded-lg border-2 border-primary"
+                    />
+                  </div>
+                ) : (
+                  <p className={`text-sm ${
+                    textAnswer.trim().toLowerCase() === exercise.correctAnswer.toLowerCase()
+                      ? 'text-success'
+                      : 'text-destructive'
+                  }`}>
+                    Respuesta correcta: {exercise.correctAnswer}
+                  </p>
+                )}
+                {exercise.explanation && (
+                  <p className="text-sm text-muted-foreground italic">
+                    {exercise.explanation}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {submitted && exercise.type === 'multiple-choice' && exercise.imageAnswer && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Solución:</p>
+            <img 
+              src={exercise.imageAnswer} 
+              alt="Solución visual" 
+              className="w-full rounded-lg border-2 border-primary"
+            />
+            {exercise.explanation && (
+              <p className="text-sm text-muted-foreground italic">
+                {exercise.explanation}
               </p>
             )}
           </div>
